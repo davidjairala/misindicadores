@@ -1,0 +1,106 @@
+{% load tags %}
+
+{% if valores %}
+  <table>
+    <tr>
+      <td class="bold bordered_bottom">
+        Actual:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        M&aacute;ximo:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'max'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'desv'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_bottom">
+        Tendencia:
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores|get_stat:'tendencia_color' }}">
+        {{ valores|get_stat:'tendencia' }}
+      </td>
+      <td class="bold bordered_bottom">
+        M&iacute;nimo:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'min'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        Promedio:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'promedio'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_bottom">
+        Media:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'media'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        Moda:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'moda'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        Varianza:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'varianza'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_bottom">
+        Inclinaci&oacute;n:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'skew'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'sem'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        Kurtosis:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'kurtosis'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_bottom">
+        <abbr title="Tendencia Relativa">TR</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'tra'|currency }}
+      </td>
+      <td class="bold bordered_bottom">
+        <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'prediccion_lineal'|currency_four }}
+      </td>
+    </tr>
+  </table>
+{% endif %}

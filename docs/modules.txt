@@ -1,0 +1,11 @@
+BeautifulSoup
+numpy
+scipy
+markdown
+matplotlib
+
+tweepy
+https://github.com/joshthecoder/tweepy
+
+feedparser
+http://www.feedparser.org/

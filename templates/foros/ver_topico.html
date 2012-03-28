@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Foros - {{ categoria.nombre }} - {{ topico.titulo }} - P&aacute;g {{ pnum }}
+{% endblock %}
+
+{% block content %}
+  {% if user.is_staff %}
+    <div class="fright metadata">
+      <a href="/admin/foros/topico/{{ topico.id }}/">Editar t&oacute;pico</a>
+    </div>
+  {% endif %}
+  
+  <h1>
+    <a href="/foros/">Foros</a> - 
+    <a href="/foros/{{ categoria.nombre_limpio }}/">{{ categoria.nombre }}</a> - 
+    <a href="/foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/">{{ topico.titulo }}</a> - 
+     P&aacute;g {{ pnum }}
+  </h1>
+  
+  {% if user.is_authenticated %}
+    <div class="hr"><!-- i --></div>
+    
+    <form method="post" action="/foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/">
+      {% csrf_token %}
+      <div>
+        <div class="bold">
+          Comentar:
+        </div>
+        <div>
+          <textarea class="foro" name="mensaje" id="mensaje"></textarea>
+        </div>
+        {% if user.is_staff and fake_users %}
+          <div>
+            <select name="fake_user" class="small">
+              <option value=""></option>
+              {% for fuser in fake_users %}
+                <option value="{{ fuser.id }}">{{ fuser.username }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+        <div>
+          <input type="submit" value="Comentar" class="small bold" />
+        </div>
+      </div>
+    </form>
+    
+    <div class="hr"><!-- i --></div>
+  {% else %}
+    <p class="error">
+      Para comentar en un t&oacute;pico del foro, tienes que <a href="/registrate/?next=/foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/">registrarte</a> y <a href="/login/?next=/foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/">hacer login</a>.
+    </p>
+  {% endif %}
+  
+  {% if mensajes %}
+    {% for mensaje in mensajes.object_list %}
+      <div class="articulo">
+        <div id="m{{ mensaje.id }}" class="metadata">
+          {{ mensaje.user.username }} | 
+          {{ mensaje.format_date }}
+          {% if user.is_staff %}
+            | <a href="/admin/foros/mensaje/{{ mensaje.id }}/">editar</a>
+          {% endif %}
+        </div>
+        <div>
+          {{ mensaje.mensaje|curlize|linebreaks }}
+        </div>
+      </div>
+       <div class="hr"><!-- i --></div>
+    {% endfor %}
+    
+    <div class="nav">
+      {% if mensajes.has_previous %}
+        <a href="foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/?page={{ mensajes.previous_page_number }}">&laquo; Anterior</a>
+      {% endif %}
+      {% if mensajes.has_next %}
+        <a href="foros/{{ categoria.nombre_limpio }}/{{ topico.id }}/?page={{ mensajes.next_page_number }}">Siguiente &raquo;</a>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endblock %}

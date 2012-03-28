@@ -1,0 +1,16 @@
+{% load markup %}
+
+{% for articulo in articulos.object_list %}
+  <div class="articulo">
+    <div class="title">
+      <a href="/articulos/{{ articulo.categoria.nombre_limpio }}/{{ articulo.id }}/">{{ articulo.titulo }}</a>
+    </div>
+    <div class="metadata">
+      <a href="/articulos/{{ articulo.categoria.nombre_limpio }}/">{{ articulo.categoria.nombre }}</a> | 
+      {{ articulo.fecha }}
+    </div>
+    <div>
+      {{ articulo.excerpt|markdown }}
+    </div>
+  </div>
+{% endfor %}

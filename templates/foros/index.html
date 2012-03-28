@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Foros
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/foros/">Foros</a>
+  </h1>
+  
+  <p class="big">
+    Comparte tus opiniones, dudas y comentarios con otros empresarios y emprendedores como t&uacute; en nuestros foros.
+  </p>
+  
+  <div class="hr"><!-- i --></div>
+  
+  {% if categorias %}
+    {% for categoria in categorias %}
+      <div class="articulo">
+        <div class="title">
+          <a href="/foros/{{ categoria.nombre_limpio }}/">{{ categoria.nombre }}</a>
+        </div>
+        <div>
+          {{ categoria.descripcion }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endblock %}

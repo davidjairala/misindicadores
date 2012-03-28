@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load tags %}
+{% load markup %}
+
+{% block title %}
+	Art&iacute;culos - {{ articulo.categoria.nombre }} - {{ articulo.titulo }} - P&aacute;g. {{ pnum }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/articulos/">Art&iacute;culos</a> - 
+    <a href="/articulos/{{ articulo.categoria.nombre_limpio }}/">{{ articulo.categoria.nombre }}</a>
+  </h1>
+  
+  <h2>
+    <a href="/articulos/{{ articulo.categoria.nombre_limpio }}/{{ articulo.id }}/">{{ articulo.titulo }}</a>
+  </h2>
+  
+  <p class="metadata">
+    <a href="/articulos/{{ articulo.categoria.nombre_limpio }}/">{{ articulo.categoria.nombre }}</a> | 
+    {{ articulo.fecha }}
+  </p>
+  
+  {{ articulo.contenido|markdown }}
+{% endblock %}

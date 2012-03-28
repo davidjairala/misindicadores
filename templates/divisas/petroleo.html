@@ -1,0 +1,396 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Petr&oacute;leo
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/divisas/">Divisas</a> - 
+    <a href="/divisas/petroleo/">Petr&oacute;leo</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/divisas/petroleo/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/divisas/petroleo/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+  
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'Mezcla Mexicana',
+            data: [
+              {{ chart_mezcla_mexicanas }}
+            ]
+          },
+          {
+            name: 'Brent',
+            data: [
+              {{ chart_brents }}
+            ]
+          },
+          {
+            name: 'WTI',
+            data: [
+              {{ chart_wtis }}
+            ]
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if petroleos %}
+    <div class="mid_box">
+      <h3>
+        An&aacute;lisis
+      </h3>
+
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            <!-- i -->
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Mezcla Mexicana
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Brent
+          </th>
+          <th class="bordered_bottom bordered_right">
+            WTI
+          </th>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Actual:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'last_value'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Tendencia:
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ mezcla_mexicanas|get_stat:'tendencia_color' }}">
+            {{ mezcla_mexicanas|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ brents|get_stat:'tendencia_color' }}">
+            {{ brents|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ wtis|get_stat:'tendencia_color' }}">
+            {{ wtis|get_stat:'tendencia' }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Promedio:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'promedio'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'sem'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            M&aacute;ximo:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'max'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            M&iacute;nimo:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'min'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Media:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'media'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Moda:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'moda'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'desv'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Varianza:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'varianza'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Inclinaci&oacute;n:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'skew'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Kurtosis:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'kurtosis'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Tendencia Relativa">TR</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'tendencia_relativa'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'tra'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ mezcla_mexicanas|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ brents|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ wtis|get_stat:'prediccion_lineal'|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="mid_box">
+      <h3>
+        Valores
+      </h3>
+    
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            <!-- i -->
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Mezcla Mexicana
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Brent
+          </th>
+          <th class="bordered_bottom bordered_right">
+            WTI
+          </th>
+        </tr>
+        {% for petroleo in petroleos %}
+          <tr>
+            <td class="bordered_bottom bordered_right">
+              {{ petroleo.fecha|sDate }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ petroleo.mezcla_mexicana|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ petroleo.brent|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ petroleo.wti|currency }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

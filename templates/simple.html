@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+	{{ title }}
+{% endblock %}
+
+{% block subtitle %}
+	{{ title }}
+{% endblock %}
+
+{% block content %}
+	{% if error %}
+		<p class="error">
+			{{ error }}
+		</p>
+	{% endif %}
+	{% if info %}
+		<p class="info">
+			{{ info }}
+		</p>
+	{% endif %}
+	{% if content %}
+		{{ content }}
+	{% else %}
+		<p>
+			<a href="javascript:history.back();">Regresar</a>
+		</p>
+	{% endif %}
+{% endblock %}

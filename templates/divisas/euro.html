@@ -1,0 +1,852 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Euro
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/divisas/">Divisas</a> - 
+    <a href="/divisas/euro/">Euro</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/divisas/euro/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/divisas/euro/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'FIX',
+            data: [
+              {{ chart_valores }}
+            ]
+          },
+          {
+            name: 'Compra',
+            data: [
+              {{ chart_compras }}
+            ]
+          },
+          {
+            name: 'Venta',
+            data: [
+              {{ chart_ventas }}
+            ]
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+  
+  <h3>
+    An&aacute;lisis
+  </h3>
+
+  <table>
+    <tr>
+      <th class="bordered_bottom bordered_right">
+        <!-- i -->
+      </th>
+      <th class="bordered_bottom bordered_right" colspan="3">
+        <!-- i -->
+      </th>
+      <th class="bordered_bottom bordered_right" colspan="4">
+        Compra
+      </th>
+      <th class="bordered_bottom bordered_right" colspan="4">
+        Venta
+      </th>
+    </tr>
+    <tr>
+      <th class="bordered_bottom bordered_right">
+        <!-- i -->
+      </th>
+      <th class="bordered_bottom bordered_right">
+        FIX
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Compra
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Venta
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Bancomer
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Banorte
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Banamex
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Santander
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Bancomer
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Banorte
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Banamex
+      </th>
+      <th class="bordered_bottom bordered_right">
+        Santander
+      </th>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Actual:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'last_value'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'last_value'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Tendencia:
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores|get_stat:'tendencia_color' }}">
+        {{ valores|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_compras|get_stat:'tendencia_color' }}">
+        {{ valores_compras|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_ventas|get_stat:'tendencia_color' }}">
+        {{ valores_ventas|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_bancomer_compras|get_stat:'tendencia_color' }}">
+        {{ valores_bancomer_compras|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_banorte_compras|get_stat:'tendencia_color' }}">
+        {{ valores_banorte_compras|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_banamex_compras|get_stat:'tendencia_color' }}">
+        {{ valores_banamex_compras|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_santander_compras|get_stat:'tendencia_color' }}">
+        {{ valores_santander_compras|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_bancomer_ventas|get_stat:'tendencia_color' }}">
+        {{ valores_bancomer_ventas|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_banorte_ventas|get_stat:'tendencia_color' }}">
+        {{ valores_banorte_ventas|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_banamex_ventas|get_stat:'tendencia_color' }}">
+        {{ valores_banamex_ventas|get_stat:'tendencia' }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ valores_santander_ventas|get_stat:'tendencia_color' }}">
+        {{ valores_santander_ventas|get_stat:'tendencia' }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Promedio:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'promedio'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'promedio'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'sem'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'sem'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        M&aacute;ximo:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'max'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'max'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        M&iacute;nimo:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'min'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'min'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Media:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'media'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'media'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Moda:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'moda'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'moda'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'desv'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'desv'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Varianza:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'varianza'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'varianza'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Inclinaci&oacute;n:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'skew'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'skew'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        Kurtosis:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'kurtosis'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'kurtosis'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        <abbr title="Tendencia Relativa">TR</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'tendencia_relativa'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'tendencia_relativa'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'tra'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'tra'|currency }}
+      </td>
+    </tr>
+    <tr>
+      <td class="bold bordered_right bordered_bottom">
+        <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_compras|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_ventas|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_compras|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_compras|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_compras|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_compras|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_bancomer_ventas|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banorte_ventas|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_banamex_ventas|get_stat:'prediccion_lineal'|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ valores_santander_ventas|get_stat:'prediccion_lineal'|currency }}
+      </td>
+    </tr>
+  </table>
+
+  <div class="hr"><!-- i --></div>
+  
+  <h3>
+    Valores
+  </h3>
+  
+  {% if euros %}
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="3">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="4">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="4">
+          Venta
+        </th>
+      </tr>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          Fecha
+        </th>
+        <th class="bordered_bottom bordered_right">
+          FIX
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Bancomer
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Banorte
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Banamex
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Santander
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Bancomer
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Banorte
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Banamex
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Santander
+        </th>
+      </tr>
+      {% for euro in euros %}
+        <tr>
+          <td class="bordered_bottom bordered_right">
+            {{ euro.fecha|sDate }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.valor|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.promedio_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.promedio_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.bancomer_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banorte_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banamex_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.santander_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.bancomer_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banorte_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banamex_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.santander_venta|currency }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+{% load tags %}
+
+{% if bmv_ipc %}
+  <table>
+    <tr>
+      <th class="bordered_right bordered_bottom">
+        <a href="/bolsas/bmv/ipc/">IPC</a>
+      </th>
+      <th class="bordered_right bordered_bottom">
+        D&iacute;a
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Semana
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Mes
+      </th>
+    </tr>
+    <tr>
+      <td class="bordered_right bordered_bottom numero">
+        {{ bmv_ipc.valor|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ bmv_ipc.dif_dia_color }}">
+        {{ bmv_ipc.dif_dia|currency }}%
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ bmv_ipc.dif_semana_color }}">
+        {{ bmv_ipc.dif_semana|currency }}%
+      </td>
+      <td class="bordered_right bordered_bottom numero {{ bmv_ipc.dif_mes_color }}">
+        {{ bmv_ipc.dif_mes|currency }}%
+      </td>
+    </tr>
+  </table>
+{% endif %}

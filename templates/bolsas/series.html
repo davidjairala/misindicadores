@@ -1,0 +1,140 @@
+{% load tags %}
+
+<table>
+  <tr>
+    {% if small_table %}
+      <th class="bordered_right bordered_bottom">
+        Emisora
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Serie
+      </th>
+    {% endif %}
+    {% if not small_table %}
+      <th class="bordered_right bordered_bottom">
+        Fecha
+      </th>
+    {% endif %}
+    <th class="bordered_right bordered_bottom">
+      Hora
+    </th>
+    <th class="bordered_right bordered_bottom">
+      Valor
+    </th>
+    <th class="bordered_right bordered_bottom">
+      Anterior
+    </th>
+    {% if not small_table %}
+      <th class="bordered_right bordered_bottom">
+        M&aacute;ximo
+      </th>
+      <th class="bordered_right bordered_bottom">
+        M&iacute;nimo
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Volumen
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Importe
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Ops
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Puntos
+      </th>
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Cambio en porcentaje">%</abbr>
+      </th>
+    {% endif %}
+    <th class="bordered_right bordered_bottom">
+      <abbr title="Cambios de comportamiento de la emisora">Tendencia</abbr>
+    </th>
+    {% if not small_table %}
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Tendencia relativa">TR</abbr>
+      </th>
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Tendencia relativa acumulada">TRA</abbr>
+      </th>
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Cambio promedio">CP</abbr>
+      </th>
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Predicci&oacute;n lineal">PL</abbr>
+      </th>
+      <th class="bordered_right bordered_bottom">
+        <abbr title="Error promedio">EP</abbr>
+      </th>
+    {% endif %}
+  </tr>
+  {% for bmv in bmvs %}
+    <tr>
+      {% if small_table %}
+        <td class="bordered_right bordered_bottom">
+          {{ bmv.get_emisora_link|safe }}
+        </td>
+        <td class="bordered_right bordered_bottom">
+          {{ bmv.serie }}
+        </td>
+      {% endif %}
+      {% if not small_table %}
+        <td class="bordered_right bordered_bottom">
+          {{ bmv.fecha|sDate }}
+        </td>
+      {% endif %}
+      <td class="bordered_right bordered_bottom">
+        {{ bmv.hora }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ bmv.ultimo|currency }}
+      </td>
+      <td class="bordered_right bordered_bottom numero">
+        {{ bmv.anterior|currency }}
+      </td>
+      {% if not small_table %}
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.maximo|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.minimo|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.volumen|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.importe|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.ops|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.puntos|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ bmv.get_porcentaje_color }}">
+          {{ bmv.porcentaje|currency }}%
+        </td>
+      {% endif %}
+      <td class="bordered_right bordered_bottom {{ bmv.get_tendencia_color }}">
+        {{ bmv.get_tendencia }}
+      </td>
+      {% if not small_table %}
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.tendencia_relativa|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.tendencia_relativa_acumulada|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.cambio_promedio|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.prediccion_lineal|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmv.error_promedio|currency }}
+        </td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+</table>

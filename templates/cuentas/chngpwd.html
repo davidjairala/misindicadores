@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Mi cuenta - Cambiar clave
+{% endblock %}
+
+{% block subtitle %}
+	Cambiar clave
+{% endblock %}
+
+{% block content %}
+	<p class="info">
+		Para cambiar tu clave por favor introduce tu clave actual, y la nueva clave que deseas tener:
+	</p>
+	<form method="post" action="/do_chngpwd/">
+    {% csrf_token %}
+    <table class="grid">
+      <tr>
+        <td>
+          Clave actual:
+        </td>
+        <td>
+          <input type="password" name="curr_pwd" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Nueva actual:
+        </td>
+        <td>
+          <input type="password" name="new_pwd" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Confirma nueva actual:
+        </td>
+        <td>
+          <input type="password" name="new_pwd2" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td>
+          <input type="submit" value="Aceptar" />
+        </td>
+      </tr>
+    </table>
+	</form>
+{% endblock %}

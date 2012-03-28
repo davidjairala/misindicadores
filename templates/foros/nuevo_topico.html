@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Foros - {{ categoria.nombre }} - Nuevo t&oacute;pico
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/foros/">Foros</a> - 
+    <a href="/foros/{{ categoria.nombre_limpio }}/">{{ categoria.nombre }}</a> - 
+    <a href="/foros/{{ categoria.nombre_limpio }}/nuevo_topico/">Nuevo t&oacute;pico</a>
+  </h1>
+  
+  <form method="post" action="/foros/{{ categoria.nombre_limpio }}/nuevo_topico/">
+    {% csrf_token %}
+    
+    <p>
+      <strong>T&iacute;tulo:</strong>
+      <br />
+      <input type="text" name="titulo" value="" size="70" />
+    </p>
+    
+    <p>
+      <strong>Mensaje:</strong>
+      <br />
+      <textarea name="mensaje" class="foro"></textarea>
+    </p>
+    
+    {% if user.is_staff and fake_users %}
+      <div>
+        <select name="fake_user" class="small">
+          <option value=""></option>
+          {% for fuser in fake_users %}
+            <option value="{{ fuser.id }}">{{ fuser.username }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% endif %}
+    
+    <p>
+      <input type="submit" value="Aceptar" class="bold" />
+      <input type="button" value="Cancelar" onclick="location.href='/foros/{{ categoria.nombre_limpio }}/';" />
+    </p>
+  </form>
+{% endblock %}

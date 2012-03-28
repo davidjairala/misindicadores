@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Bolsa Mexicana de Valores - IPC - {{ rango_title|safe }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/bolsas/">Bolsas</a> - 
+    <a href="/bolsas/bmv/">Bolsa Mexicana de Valores</a> - 
+    <a href="/bolsas/bmv/ipc/">IPC</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }} - {{ rango_title|safe }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/bolsas/bmv/ipc/{{ rango }}/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/bolsas/bmv/ipc/{{ rango }}/';" />
+    </form>
+  </div>
+  
+  {% include "chart.html" %}
+  
+  <div class="hr"><!-- i --></div>
+  
+  <div class="buttons">
+    <a href="/bolsas/bmv/ipc/">D&iacute;a</a>
+    <a href="/bolsas/bmv/ipc/semana/">Semana</a>
+    <a href="/bolsas/bmv/ipc/mes/">Mes</a>
+    <a href="/bolsas/bmv/ipc/3meses/">3 meses</a>
+    <a href="/bolsas/bmv/ipc/6meses/">6 meses</a>
+  </div>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if bmvs %}
+    <div class="mid_box">
+      <h3>
+        An&aacute;lisis
+      </h3>
+
+      {% include "analisis.html" %}
+    </div>
+    
+    <div class="mid_box">
+      <h3>
+        Valores
+      </h3>
+    
+      {% include "valores.html" %}
+    </div>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,21 @@
+<div id="usermenu">
+  {% if user.is_authenticated %}
+    <strong>{{ user.username }}:</strong>
+    {% if user.is_staff %}
+      <a href="/admin/">Admin</a> &#183; 
+    {% endif %}
+  {% endif %}
+  <a href="/">Inicio</a> &#183; 
+  <a href="/indicadores/">Indicadores</a> &#183; 
+  <a href="/boletin/">Bolet&iacute;n</a> &#183; 
+  <a href="/invitar/">Invita a un amigo</a> &#183; 
+  <a href="/contacto/">Contacto</a> &#183; 
+  {% if user.is_authenticated %}
+    <a href="/chngpwd/">Cambia tu clave</a> &#183; 
+    <a href="/logout/">Salir</a> &#183; 
+  {% else %}
+    <a href="/registrate/">Reg&iacute;strate</a> &#183; 
+    <a href="/login/">Login</a> &#183; 
+    <a href="/recover/">Recupera tu clave</a> &#183; 
+  {% endif %}
+</div>

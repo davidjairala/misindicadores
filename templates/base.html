@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title>{% block title %}Bienvenido{% endblock %} - Mis Indicadores</title>
+
+    <link rel="shortcut icon" href="/site_media/images/fav.ico" />
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/feeds/noticias/" />
+    <link rel="stylesheet" href="/site_media/css/style.css" type="text/css" />
+
+    <meta name="google-site-verification" content="Xj8tRWqlSIoNDbWtgBEQT9_dSkw7nB1LW8A7T4fkV3k" />
+
+    <script src="/site_media/js/jquery/jquery.js" type="text/javascript"></script>
+    <script src="/site_media/js/supersleight.plugin.js" type="text/javascript"></script>
+    <script src="/site_media/js/highcharts/highcharts.js" type="text/javascript"></script>
+    <!--[if IE]>
+      <script src="/site_media/js/highcharts/excanvas.compiled.js" type="text/javascript"></script>
+    <![endif]-->
+    <script src="/site_media/js/application.js" type="text/javascript"></script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header">
+        <div id="logo">
+          <a href="/" title="Mis Indicadores"><img src="/site_media/images/logo.png" alt="Mis Indicadores" /></a>
+        </div>
+        <div id="slogan">
+          Todos los indicadores, gr&aacute;ficas y an&aacute;lisis que necesitas.
+        </div>
+      </div>
+
+      {% include "menu.html" %}
+
+      <div id="content_holder">
+
+        {% include "usermenu.html" %}
+
+        <div id="content">
+          {% if messages %}
+            <ul class="messages">
+              {% for message in messages %}
+                <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message|safe }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+
+      <div id="footer">
+        <a href="/">Mis Indicadores</a> |
+        <a href="mailto:info@misindicadores.com">info@misindicadores.com</a> |
+        <a href="/articulos/blog/">Blog</a> |
+        <a href="/contacto/">Contacto</a> |
+        <a href="/invitar/">Invita a un amigo</a> |
+        <a href="http://twitter.com/#!/misindicadores">Twitter</a> |
+        <a href="http://www.facebook.com/pages/Mis-Indicadores/163913163639832?v=wall">Facebook</a> |
+        ver. 2.0
+      </div>
+    </div>
+
+    <div id="infos"><!-- i --></div>
+    <div id="ajaxer"><!-- i --></div>
+
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-1958853-18");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
+  </body>
+</html>

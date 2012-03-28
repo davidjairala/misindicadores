@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Invita a un amigo
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/invitar/">Invita a un amigo</a>
+  </h1>
+  
+  <p class="big">
+    Si disfrutas de Mis Indicadores y deseas recomend&aacute;rselo a un amigo, por favor llena la siguiente forma:
+  </p>
+  
+  <form method="post" action="/invitar/">
+    {% csrf_token %}
+    
+    <p>
+      <strong>Tu nombre:</strong>
+      <br />
+      <input type="text" name="nombre" value="" size="50" />
+    </p>
+    
+    <p>
+      <strong>Email de tu amigo:</strong>
+      <br />
+      <input type="text" name="email" value="" size="50" />
+    </p>
+    
+    <p>
+      <strong>Nombre de tu amigo:</strong>
+      <br />
+      <input type="text" name="nombre_amigo" value="" size="50" />
+    </p>
+    
+    <p>
+      <input type="submit" value="Enviar" class="bold" />
+    </p>
+  </form>
+{% endblock %}

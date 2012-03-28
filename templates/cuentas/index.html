@@ -1,0 +1,654 @@
+{% extends "base.html" %}
+{% load tags %}
+{% load markup %}
+{% load cache %}
+
+{% block title %}
+	Bienvenido
+{% endblock %}
+
+{% block content %}
+  {% cache 500 portada %}
+    <h1>
+      Bienvenido a Mis Indicadores
+    </h1>
+    
+    <p>
+      En Mis Indicadores podr&aacute;s encontrar una colecci&oacute;n de indicadores, gr&aacute;ficas y an&aacute;lisis que te dan un panorama amplio y completo sobre la situaci&oacute;n econ&oacute;mica en M&eacute;xico.
+    </p>
+    
+    <p>
+      Para navegar por el portal, utiliza el men&uacute; superior, o bien si lo prefieres puedes utilizar los siguientes enlaces:
+    </p>
+    
+    <p>
+      <a href="/indicadores/">Lista de todos los indicadores</a>,
+      <a href="/divisas/">Divisas</a>,
+      <a href="/bolsas/">Bolsas</a>,
+      <a href="/inflacion/">Inflaci&oacute;n</a>,
+      <a href="/tasas/">Tasas</a>,
+      <a href="/desempeno/">Desempe&ntilde;o</a>.
+    </p>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h1>
+      Resumen del d&iacute;a
+    </h1>
+    
+    <div class="fright small">
+      <form method="get" action="/resumen/">
+        {{ fecha|fecha_select|safe }}
+        <input type="submit" value="Ver" />
+        <input type="button" value="Hoy" onclick="location.href = '/resumen/';" />
+      </form>
+    </div>
+    
+    <h2>
+      {{ fecha|sDate }}
+    </h2>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/divisas/dolar/">D&oacute;lar</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            FIX
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Compra
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Venta
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ dolar.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ dolar.promedio_compra|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ dolar.promedio_venta|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/divisas/euro/">Euro</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            FIX
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Compra
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Venta
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ euro.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ euro.promedio_compra|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ euro.promedio_venta|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/divisas/tabla_comparativa/">Otras divisas</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            <a href="/divisas/deg/">DEG</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/divisas/libra/">Libra</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/divisas/yen/">Yen</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/divisas/petroleo/">Petr&oacute;leo</a>
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ deg.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ libra.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ yen.valor|currency_four }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ petroleo.mezcla_mexicana|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/bolsas/bmv/">BMV</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            <a href="/bolsas/bmv/ipc/">IPC</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            D&iacute;a
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Semana
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Mes
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ bmv.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ bmv.dif_dia_color }}">
+            {{ bmv.dif_dia|currency }}%
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ bmv.dif_semana_color }}">
+            {{ bmv.dif_semana|currency }}%
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ bmv.dif_mes_color }}">
+            {{ bmv.dif_mes|currency }}%
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+    
+    <div class="mid_box">
+      <img src="/divisas/img_dolar/" alt="D&oacute;lar" />
+    </div>
+    
+    <div class="mid_box">
+      <img src="/divisas/img_euro/" alt="Euro" />
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+    
+    <div class="quarter_box">
+      <h3>
+        D&oacute;lar compra en bancos
+      </h3>
+      
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            Banco
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Valor
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Bancomer:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.bancomer_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banorte:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.banorte_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banamex:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.banamex_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Santander:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.santander_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            IXE:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.ixe_compra|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="quarter_box">
+      <h3>
+        D&oacute;lar venta en bancos
+      </h3>
+      
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            Banco
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Valor
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Bancomer:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.bancomer_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banorte:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.banorte_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banamex:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.banamex_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Santander:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.santander_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            IXE:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ dolar.ixe_venta|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="quarter_box">
+      <h3>
+        Euro compra en bancos
+      </h3>
+      
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            Banco
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Valor
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Bancomer:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.bancomer_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banorte:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banorte_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banamex:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banamex_compra|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Santander:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.santander_compra|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="quarter_box">
+      <h3>
+        Euro venta en bancos
+      </h3>
+      
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            Banco
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Valor
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Bancomer:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.bancomer_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banorte:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banorte_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Banamex:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.banamex_venta|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bordered_bottom bordered_right bold">
+            Santander:
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ euro.santander_venta|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+    
+    <div class="mid_box">
+      <img src="/bolsas/img_bmv_ipc/" alt="BMV - IPC" />
+    </div>
+    
+    <div class="mid_box">
+      <img src="/bolsas/img_dow/" alt="Dow Jones" />
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+
+    <div class="mid_box">
+      <h2>
+        <a href="/bolsas/">Bolsas</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            <a href="/bolsas/dow/">Dow Jones</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/bolsas/nasdaq/">NASDAQ</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/bolsas/sp500/">S&amp;P 500</a>
+          </th>
+          <th class="bordered_right bordered_bottom">
+            <a href="/bolsas/nikkei/">Nikkei 225</a>
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ dow.cierre|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ nasdaq.cierre|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ sp500.cierre|currency_four }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ nikkei.cierre|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/inflacion/inpc/">INPC</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            Inflaci&oacute;n {{ fecha|sDate:2 }}
+          </th>
+          <th class="bordered_right bordered_bottom">
+            INPC
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ inpc.get_inflacion|currency }}%
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ inpc.valor|currency }}%
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="quarter_box">
+      <h2>
+        <a href="/tasas/imi/">&Iacute;ndice Mis Indicadores</a>
+      </h2>
+      
+      <table>
+        <tr>
+          <th class="bordered_right bordered_bottom">
+            IMI
+          </th>
+          <th class="bordered_right bordered_bottom">
+            D&iacute;a
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Semana
+          </th>
+          <th class="bordered_right bordered_bottom">
+            Mes
+          </th>
+        </tr>
+        <tr>
+          <td class="bordered_right bordered_bottom numero">
+            {{ imi.valor|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ imi.dif_dia_color }}">
+            {{ imi.dif_dia|currency }}%
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ imi.dif_semana_color }}">
+            {{ imi.dif_semana|currency }}%
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ imi.dif_mes_color }}">
+            {{ imi.dif_mes|currency }}%
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+    
+    <div class="mid_box">
+      <img src="/inflacion/img_inpc/" alt="INPC" />
+    </div>
+    
+    <div class="mid_box">
+      <img src="/tasas/img_imi/" alt="IMI" />
+    </div>
+    
+    <div class="big_break"><!-- i --></div>
+
+    <div class="hr"><!-- i --></div>
+    
+    <h1>
+      <a href="/boletin/">Bolet&iacute;n</a>
+    </h1>
+    
+    <p>
+      Si quieres recibir los indicadores de Mis Indicadores directamente en tu correo electr&oacute;nico (Email), habilita el <a href="/boletin/">Bolet&iacute;n</a> de Mis Indicadores.
+    </p>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h1>
+      <a href="/articulos/notas/">Notas</a>
+    </h1>
+    
+    <p class="big">
+      Nuestra selecci&oacute;n de notas, art&iacute;culos y estudios referentes a econom&iacute;a, negocios, PyMEs, etc.
+    </p>
+
+    {% for nota in notas %}
+      <div class="articulo">
+        <div class="title">
+          <a href="/articulos/{{ nota.categoria.nombre_limpio }}/{{ nota.id }}/">{{ nota.titulo }}</a>
+        </div>
+        <div class="metadata">
+          <a href="/articulos/{{ nota.categoria.nombre_limpio }}/">{{ nota.categoria.nombre }}</a> | 
+          {{ nota.fecha }}
+        </div>
+        <div>
+          {{ nota.excerpt|markdown }}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h1>
+      <a href="/medios/">Medios</a>
+    </h1>
+    
+    {% if articulos %}
+      {% include "medios/_articulos.html" %}
+    {% endif %}
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h1>
+      <a href="/foros/">Foros</a>
+    </h1>
+    
+    <div class="mid_box">
+      <p class="big">
+        &Uacute;ltimos t&oacute;picos en los foros:
+      </p>
+    
+      {% for topico in topicos %}
+        <div class="articulo">
+          <div class="title">
+            <a href="/foros/{{ topico.categoria.nombre_limpio }}/{{ topico.id }}/">{{ topico.titulo }}</a>
+          </div>
+          <div class="metadata">
+            {{ topico.user.username }} | 
+            {{ topico.fecha }}
+            {% if user.is_staff %}
+              | <a href="/admin/foros/topico/{{ topico.id }}/">Editar</a>
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="mid_box">
+      <p class="big">
+        &Uacute;ltimos mensajes en los foros:
+      </p>
+      
+      {% for mensaje in mensajes %}
+        <div class="articulo">
+          <div class="title">
+            <a href="/foros/{{ mensaje.topico.categoria.nombre_limpio }}/{{ mensaje.topico.id }}/">{{ mensaje.topico.titulo }}</a>
+          </div>
+          <div>
+            {{ mensaje.excerpt|safe }}
+          </div>
+          <div class="metadata">
+            {{ mensaje.user.username }} | 
+            {{ mensaje.fecha }}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+    <div class="break"><!-- i --></div>
+    
+    <div class="hr"><!-- i --></div>
+    
+    {% include "cuentas/_indicadores.html" %}
+    
+    <div class="hr"><!-- i --></div>
+
+    <h1>
+      <a href="/articulos/blog/">Noticias</a>
+    </h1>
+
+    {% for noticia in noticias %}
+      <div class="articulo">
+        <div class="title">
+          <a href="/articulos/{{ noticia.categoria.nombre_limpio }}/{{ noticia.id }}/">{{ noticia.titulo }}</a>
+        </div>
+        <div class="metadata">
+          <a href="/articulos/{{ noticia.categoria.nombre_limpio }}/">{{ noticia.categoria.nombre }}</a> | 
+          {{ noticia.fecha }}
+        </div>
+        <div>
+          {{ noticia.excerpt|markdown }}
+        </div>
+      </div>
+    {% endfor %}
+  {% endcache %}
+{% endblock %}

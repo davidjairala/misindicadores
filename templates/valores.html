@@ -1,0 +1,40 @@
+{% load tags %}
+
+{% if arr_valores %}
+  <table>
+    <tr>
+      <th class="bordered_right bordered_bottom">
+        {% if valores_show_hora %}
+          Hora
+        {% else %}
+          Fecha
+        {% endif %}
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Valor
+      </th>
+    </tr>
+    {% for valor in arr_valores %}
+      <tr>
+        <td class="bordered_right bordered_bottom">
+          {% if valores_show_hora %}
+            {{ valor.hora }}
+          {% else %}
+            {% if valores_mes_date %}
+              {{ valor.fecha|sDate:2 }}
+            {% else %}
+              {{ valor.fecha|sDate }}
+            {% endif %}
+          {% endif %}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {% if valores_no_format %}
+            {{ valor.valor|currency_four }}
+          {% else %}
+            {{ valor.valor|currency }}
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}

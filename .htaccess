@@ -1,0 +1,58 @@
+RewriteEngine on
+
+# =================
+# URLs viejos
+# =================
+
+RewriteRule /mi_cuenta$ / [R]
+
+# RSS
+RewriteRule /rss$ /feeds/noticias/ [R]
+RewriteRule /rss/bmv$ /bolsas/bmv/ [R]
+RewriteRule /rss/dolar$ /divisas/dolar/ [R]
+RewriteRule /rss/medios$ /medios/ [R]
+
+# Divisas
+RewriteRule /indicadores/dolar$ /divisas/dolar/ [R]
+RewriteRule /indicadores/euro$ /divisas/euro/ [R]
+RewriteRule /indicadores/deg$ /divisas/deg/ [R]
+RewriteRule /indicadores/libra$ /divisas/libra/ [R]
+RewriteRule /indicadores/metales$ /divisas/metales/ [R]
+RewriteRule /indicadores/oro$ /divisas/oro/ [R]
+RewriteRule /indicadores/petroleo$ /divisas/petroleo/ [R]
+RewriteRule /indicadores/plata$ /divisas/plata/ [R]
+RewriteRule /indicadores/yen$ /divisas/yen/ [R]
+RewriteRule /indicadores/tabla_comparativa_divisas$ /divisas/tabla_comparativa/ [R]
+
+# Bolsas
+RewriteRule /indicadores/bmv/(.*)$ /bolsas/bmv/emisora/$1/ [R]
+RewriteRule /indicadores/bmv$ /bolsas/bmv/ [R]
+RewriteRule /indicadores/dow$ /bolsas/dow/ [R]
+RewriteRule /indicadores/nasdaq$ /bolsas/nasdaq/ [R]
+RewriteRule /indicadores/sp500$ /bolsas/sp500/ [R]
+RewriteRule /indicadores/nikkei$ /bolsas/nikkei/ [R]
+
+# Inflacion
+RewriteRule /indicadores/inpc$ /inflacion/inpc/ [R]
+RewriteRule /indicadores/cpi$ /inflacion/cpi/ [R]
+RewriteRule /indicadores/udis$ /inflacion/udis/ [R]
+
+# Tasas
+RewriteRule /indicadores/imi$ /tasas/imi/ [R]
+RewriteRule /indicadores/cpp$ /tasas/cpp/ [R]
+RewriteRule /indicadores/cetes$ /tasas/cetes/ [R]
+RewriteRule /indicadores/tiie_28$ /tasas/tiie/ [R]
+RewriteRule /indicadores/tiie_91$ /tasas/tiie/ [R]
+
+# Desempeno
+RewriteRule /indicadores/afores$ /desempeno/afores/ [R]
+RewriteRule /indicadores/desempleo$ /desempeno/desempleo/ [R]
+RewriteRule /indicadores/pib$ /desempeno/pib/ [R]
+RewriteRule /indicadores/reservas$ /desempeno/reservas/ [R]
+
+# =================
+# Dominio preferido
+# =================
+RewriteCond %{HTTP_HOST} .
+RewriteCond %{HTTP_HOST} ^www\.misindicadores\.com
+RewriteRule (.*) http://misindicadores.com/ [R=301,L]

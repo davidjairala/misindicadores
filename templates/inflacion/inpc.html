@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	{{ chart_title|safe }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/inflacion/">Inflaci&oacute;n</a> - 
+    <a href="/inflacion/{{ slug }}/">{{ chart_title|safe }}</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/inflacion/{{ slug }}/">
+      {{ fecha|fecha_select_no_day|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/inflacion/{{ slug }}/';" />
+    </form>
+  </div>
+  
+  {% include "chart.html" %}
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if valores %}
+    <div class="mid_box">
+      <h3>
+        Inflaci&oacute;n - 
+        {{ last_inpc.fecha|sDate:2 }}
+      </h3>
+      
+      <p class="bold">
+        {{ last_inpc.get_inflacion|currency }}%
+      </p>
+      
+      <h3>
+        An&aacute;lisis
+      </h3>
+
+      {% include "analisis.html" %}
+    </div>
+    
+    <div class="mid_box">
+      <h3>
+        Valores
+      </h3>
+    
+      {% include "valores.html" %}
+    </div>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

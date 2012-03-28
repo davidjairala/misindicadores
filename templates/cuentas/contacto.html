@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Contacto
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/contacto/">Contacto</a>
+  </h1>
+  
+  <p>
+    Nos puedes contactar llenando la siguiente forma:
+  </p>
+  
+  <form method="post" action="/contacto/">
+    {% csrf_token %}
+    
+    <p>
+      <strong>Nombre:</strong>
+      <br />
+      <input type="text" name="nombre" value="" size="50" />
+    </p>
+    
+    <p>
+      <strong>Email:</strong>
+      <br />
+      <input type="text" name="email" value="" size="50" />
+    </p>
+    
+    <p>
+      <strong>Comentarios:</strong>
+      <br />
+      <textarea name="comentarios" class="foro"></textarea>
+    </p>
+    
+    <p>
+      <input type="submit" value="Enviar" class="bold" />
+    </p>
+  </form>
+  
+  <div class="hr"><!-- i --></div>
+  
+  <p class="big">
+    O por email:
+    <br />
+    <a href="mailto:info@misindicadores.com">info@misindicadores.com</a>
+  </p>
+{% endblock %}

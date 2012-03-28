@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Mi cuenta - Cambiar clave
+{% endblock %}
+
+{% block subtitle %}
+	Cambiar clave
+{% endblock %}
+
+{% block content %}
+	<p class="success">
+		Tu clave ha sido modificada exitosamente.  No olvides anotarla:
+	</p>
+	<p class="big bold">
+		{{ new_pwd }}
+	</p>
+{% endblock %}

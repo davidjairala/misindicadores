@@ -1,0 +1,2 @@
+- Poner link de Editar en artículos
+- Poner favico en admin

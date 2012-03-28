@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	{{ chart_title|safe }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/tasas/">Inflaci&oacute;n</a> - 
+    <a href="/tasas/{{ slug }}/">CETES</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/tasas/{{ slug }}/">
+      <select name="plazo">
+        {% for pl in plazos %}
+          <option value="{{ pl }}" {% if pl == plazo %}selected="selected"{% endif %}>{{ pl }} d&iacute;as</option>
+        {% endfor %}
+      </select>
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/tasas/{{ slug }}/';" />
+    </form>
+  </div>
+  
+  {% include "chart.html" %}
+  
+  <div class="hr"><!-- i --></div>
+  
+  <div class="small">
+    {% for pl in plazos %}
+      <a href="/tasas/{{ slug }}?plazo={{ pl }}">{{ pl }} d&iacute;as</a>
+    {% endfor %}
+  </div>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if valores %}
+    <div class="mid_box">
+      <h3>
+        An&aacute;lisis
+      </h3>
+
+      {% include "analisis.html" %}
+    </div>
+    
+    <div class="mid_box">
+      <h3>
+        Valores
+      </h3>
+    
+      {% include "valores.html" %}
+    </div>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

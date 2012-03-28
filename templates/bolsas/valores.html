@@ -1,0 +1,52 @@
+{% load tags %}
+
+{% if tabla_valores %}
+  <table>
+    <tr>
+      <th class="bordered_right bordered_bottom">
+        Fecha
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Cierre
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Valor
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Alto
+      </th>
+      <th class="bordered_right bordered_bottom">
+        Bajo
+      </th>
+      {% if tabla_show_volumen %}
+        <th class="bordered_right bordered_bottom">
+          Volumen
+        </th>
+      {% endif %}
+    </tr>
+    {% for valor in tabla_valores %}
+      <tr>
+        <td class="bordered_right bordered_bottom">
+          {{ valor.fecha|sDate }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ valor.cierre|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ valor.valor|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ valor.alto|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ valor.bajo|currency }}
+        </td>
+        {% if tabla_show_volumen %}
+          <td class="bordered_right bordered_bottom numero">
+            {{ valor.volumen|currency }}
+          </td>
+        {% endif %}
+      </tr>
+    {% endfor %}
+  </table>
+{% endif %}

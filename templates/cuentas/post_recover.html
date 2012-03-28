@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Mi cuenta - Recuperar clave
+{% endblock %}
+
+{% block subtitle %}
+	Recuperar clave
+{% endblock %}
+
+{% block content %}
+	<p class="success">
+		Tu clave ha sido modificada exitosamente.<br />
+		<br />
+		Tu nueva clave es:
+	</p>
+	<p class="big bold">
+		{{ new_pass }}
+	</p>
+	<p>
+		Por favor anota tu clave.
+	</p>
+{% endblock %}

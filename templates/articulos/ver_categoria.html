@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Art&iacute;culos - {{ categoria.nombre }} - P&aacute;g. {{ pnum }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/articulos/">Art&iacute;culos</a> - 
+    <a href="/articulos/{{ categoria.nombre_limpio }}/">{{ categoria.nombre }}</a> - 
+    P&aacute;g. {{ pnum }}
+  </h1>
+  
+  {% if articulos %}
+    {% include "articulos/_articulos.html" %}
+    
+    <div class="nav">
+      {% if articulos.has_previous %}
+        <a href="/medios/?page={{ articulos.previous_page_number }}">&laquo; Anterior</a>
+      {% endif %}
+      {% if articulos.has_next %}
+        <a href="/medios/?page={{ articulos.next_page_number }}">Siguiente &raquo;</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <div class="error">
+      No encontramos art&iacute;culos.  Por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

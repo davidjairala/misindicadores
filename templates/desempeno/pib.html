@@ -1,0 +1,463 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	{{ chart_title|safe }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/desempeno/">Desempe&ntilde;o</a> - 
+    <a href="/desempeno/{{ slug }}/">{{ chart_title|safe }}</a>
+  </h1>
+  
+  <h2>
+    {{ year }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/desempeno/{{ slug }}/">
+      {{ fecha|fecha_select_no_dm|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/desempeno/{{ slug }}/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'Total',
+            data: [
+              {{ chart_totales }}
+            ]
+          },
+          {
+            name: 'Primarias',
+            data: [
+              {{ chart_primarias }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Secundarias',
+            data: [
+              {{ chart_secundarias }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Terciarias',
+            data: [
+              {{ chart_terciarias }}
+            ],
+            visible: false
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if pibs %}
+    <h3>
+      An&aacute;lisis
+    </h3>
+
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Total
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Primarias
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Secundarias
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Terciarias
+        </th>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Actual:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'last_value'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Tendencia:
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ totales|get_stat:'tendencia_color' }}">
+          {{ totales|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ primarias|get_stat:'tendencia_color' }}">
+          {{ primarias|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ secundarias|get_stat:'tendencia_color' }}">
+          {{ secundarias|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ terciarias|get_stat:'tendencia_color' }}">
+          {{ terciarias|get_stat:'tendencia' }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Promedio:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'promedio'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'sem'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&aacute;ximo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'max'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&iacute;nimo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'min'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Media:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'media'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Moda:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'moda'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'desv'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Varianza:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'varianza'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Inclinaci&oacute;n:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'skew'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Kurtosis:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'kurtosis'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa">TR</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'tendencia_relativa'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'tra'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ totales|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ primarias|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ secundarias|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ terciarias|get_stat:'prediccion_lineal'|currency }}
+        </td>
+      </tr>
+    </table>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h3>
+      Valores
+    </h3>
+  
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          A&ntilde;o
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Trimestre
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Total
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Primarias
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Secundarias
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Terciarias
+        </th>
+      </tr>
+      {% for pib in pibs %}
+        <tr>
+          <td class="bordered_bottom bordered_right">
+            {{ pib.year }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ pib.get_trimestre }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ pib.total|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ pib.primarias|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ pib.secundarias|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ pib.terciarias|currency }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,76 @@
+<div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+
+<script type="text/javascript"> 
+  $(document).ready(function() {
+    var chart = new Highcharts.Chart({
+      chart: {
+        renderTo: 'container_chart',
+        defaultSeriesType: 'line',
+        margin: [50, 20, 80, 70]
+      },
+      title: {
+        text: "{{ chart_title|safe }}",
+        style: {
+          margin: '10px 100px 0 0' // center it
+        }
+      },
+      subtitle: {
+        text: '{{ chart_source|safe }}',
+        style: {
+          margin: '0 100px 0 0' // center it
+        }
+      },
+      xAxis: {
+        categories: [
+          {{ chart_categories|safe }}
+        ],
+        title: {
+          text: 'Fecha'
+        },
+        labels: {
+          rotation: -90, 
+          y: 34, 
+          style: {
+            fontSize: '8pt'
+          }
+        }
+      },
+      yAxis: {
+        title: {
+          text: 'Valor'
+        },
+        plotLines: [{
+          value: 0,
+          width: 1,
+          color: '#808080'
+        }]
+      },
+      tooltip: {
+        formatter: function() {
+          return '<b>'+ this.series.name +'</b><br/>'+
+          this.x +': '+ this.y;
+        }
+      },
+      legend: {
+        layout: 'vertical',
+        style: {
+          left: 'auto',
+          bottom: 'auto',
+          right: '10px',
+          top: '100px'
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [
+        {
+          name: 'Valor',
+          data: [
+            {{ chart_valores }}
+          ]
+        }
+      ]
+    });
+  });
+</script>

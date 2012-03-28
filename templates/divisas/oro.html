@@ -1,0 +1,734 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Oro
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/divisas/">Divisas</a> - 
+    <a href="/divisas/oro/">Oro</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/divisas/oro/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/divisas/oro/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+  
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'Azteca compra',
+            data: [
+              {{ chart_azteca_compras }}
+            ]
+          },
+          {
+            name: 'Azteca venta',
+            data: [
+              {{ chart_azteca_ventas }}
+            ]
+          },
+          {
+            name: 'Centenario compra',
+            data: [
+              {{ chart_centenario_compras }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Centenario venta',
+            data: [
+              {{ chart_centenario_ventas }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Hidalgo compra',
+            data: [
+              {{ chart_hidalgo_compras }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Hidalgo venta',
+            data: [
+              {{ chart_hidalgo_ventas }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Oro Libertad compra',
+            data: [
+              {{ chart_oro_libertad_compras }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Oro Libertad venta',
+            data: [
+              {{ chart_oro_libertad_ventas }}
+            ],
+            visible: false
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if oros %}
+      <h3>
+      An&aacute;lisis
+    </h3>
+
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Azteca
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Centenario
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Hidalgo
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Oro libertad
+        </th>
+      </tr>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Actual:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'last_value'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Tendencia:
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ azteca_compras|get_stat:'tendencia_color' }}">
+          {{ azteca_compras|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ azteca_ventas|get_stat:'tendencia_color' }}">
+          {{ azteca_ventas|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ centenario_compras|get_stat:'tendencia_color' }}">
+          {{ centenario_compras|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ centenario_ventas|get_stat:'tendencia_color' }}">
+          {{ centenario_ventas|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ hidalgo_compras|get_stat:'tendencia_color' }}">
+          {{ hidalgo_compras|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ hidalgo_ventas|get_stat:'tendencia_color' }}">
+          {{ hidalgo_ventas|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ oro_libertad_compras|get_stat:'tendencia_color' }}">
+          {{ oro_libertad_compras|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ oro_libertad_ventas|get_stat:'tendencia_color' }}">
+          {{ oro_libertad_ventas|get_stat:'tendencia' }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Promedio:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'promedio'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'sem'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&aacute;ximo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'max'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&iacute;nimo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'min'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Media:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'media'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Moda:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'moda'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'desv'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Varianza:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'varianza'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Inclinaci&oacute;n:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'skew'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Kurtosis:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'kurtosis'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa">TR</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'tendencia_relativa'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'tra'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_compras|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ azteca_ventas|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_compras|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ centenario_ventas|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_compras|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ hidalgo_ventas|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_compras|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ oro_libertad_ventas|get_stat:'prediccion_lineal'|currency }}
+        </td>
+      </tr>
+    </table>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h3>
+      Valores
+    </h3>
+  
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Azteca
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Centenario
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Hidalgo
+        </th>
+        <th class="bordered_bottom bordered_right" colspan="2">
+          Oro libertad
+        </th>
+      </tr>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Compra
+        </th>
+        <th class="bordered_bottom bordered_right">
+          Venta
+        </th>
+      </tr>
+      {% for oro in oros %}
+        <tr>
+          <td class="bordered_bottom bordered_right">
+            {{ oro.fecha|sDate }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.azteca_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.azteca_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.centenario_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.centenario_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.hidalgo_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.hidalgo_venta|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.oro_libertad_compra|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ oro.oro_libertad_venta|currency }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

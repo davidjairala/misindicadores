@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Bolet&iacute;n
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/boletin/">Bolet&iacute;n</a>
+  </h1>
+  
+  {% if boletin %}
+    <p class="big">
+      Para configurar tu bolet&iacute;n, modifica los siguientes datos:
+    </p>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <form method="post">
+      {% csrf_token %}
+      
+      <div class="big">
+        <input type="checkbox" id="boletin_checkbox" name="activo" value="1" {% if boletin.activo %}checked="checked"{% endif %} /> 
+        <label for="boletin_checkbox">Activo</lable>
+      </div>
+      
+      <br />
+      
+      <div>
+        <strong>Periocidad:</strong>
+        <br />
+        <select name="periocidad" id="boletin_periocidad" onchange="checkBoletinSelects();">
+          <option value="dos_dia" {% if boletin.periocidad == "dos_dia" %}selected="selected"{% endif %}>Dos veces al d&iacute;a</option>
+          <option value="diario" {% if boletin.periocidad == "diario" %}selected="selected"{% endif %}>Diario</option>
+          <option value="semanal" {% if boletin.periocidad == "semanal" %}selected="selected"{% endif %}>Semanal</option>
+        </select>
+        <br />
+        <br />
+      </div>
+      
+      <div id="cont_dia">
+        <strong>D&iacute;a:</strong>
+        <br />
+        <select name="dia" id="boletin_dia">
+          <option value="Monday" {% if boletin.dia == "Monday" %}selected="selected"{% endif %}>Lunes</option>
+          <option value="Tuesday" {% if boletin.dia == "Tuesday" %}selected="selected"{% endif %}>Martes</option>
+          <option value="Wednesday" {% if boletin.dia == "Wednesday" %}selected="selected"{% endif %}>Mi&eacute;rcoles</option>
+          <option value="Thursday" {% if boletin.dia == "Thursday" %}selected="selected"{% endif %}>Jueves</option>
+          <option value="Friday" {% if boletin.dia == "Friday" %}selected="selected"{% endif %}>Viernes</option>
+          <option value="Saturday" {% if boletin.dia == "Saturday" %}selected="selected"{% endif %}>S&aacute;bado</option>
+          <option value="Sunday" {% if boletin.dia == "Sunday" %}selected="selected"{% endif %}>Domingo</option>
+        </select>
+        <br />
+        <br />
+      </div>
+      
+      <div id="cont_hora">
+        <strong>Hora:</strong>
+        <br />
+        <select name="hora" id="boletin_hora">
+          {% for hora in boletin.get_horas %}
+            <option value="{{ hora }}" {% if boletin.hora == hora %}selected="selected"{% endif %}>{{ hora|format_hora }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      
+      <br />
+      
+      <div>
+        <input type="submit" value="Configurar" class="bold" />
+      </div>
+    </form>
+
+    <p class="big">
+      Recuerda, si no est&aacute;s recibiendo to bolet&iacute;n, no olvides revisar en tu carpeta de Correo Electr&oacute;nico No Deseado.  A veces los clientes de Email confunden los emails de Mis Indicadores con correo no deseado.
+    </p>
+    
+    <p class="big">
+      Ten en cuenta que actualmente la hora del servidor es: <strong>{{ hora }} horas con {{ minutos }} minutos</strong>.  El sistema env&iacute;a los boletines de acuerdo a esta hora.
+    </p>
+    
+    <script type="text/javascript">
+      $(document).ready(function() {
+        checkBoletinSelects();
+      });
+    </script>
+  {% else %}
+    <p class="error">
+      Para configurar tu bolet&iacute;n debes <a href="/registrate/?next=/boletin/">registrarte</a> y <a href="/login/?next=/boletin/">hacer login</a>.  El registro es gratuito y no te tomar&aacute; m&aacute;s de un minuto.
+    </p>
+  {% endif %}
+{% endblock %}

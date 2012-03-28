@@ -1,0 +1,13 @@
+Request token URL
+https://api.twitter.com/oauth/request_token
+
+Access token URL
+https://api.twitter.com/oauth/access_token
+
+Authorize URL
+https://api.twitter.com/oauth/authorize
+
+We support hmac-sha1 signatures. We do not support the plaintext signature method.
+
+Registered OAuth Callback URL
+http://misindicadores.com/articulos/update_twitter/

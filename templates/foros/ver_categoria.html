@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Foros - {{ categoria.nombre }} - P&aacute;g {{ pnum }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/foros/">Foros</a> - 
+    <a href="/foros/{{ categoria.nombre_limpio }}/">{{ categoria.nombre }}</a> - 
+    P&aacute;g {{ pnum }}
+  </h1>
+  
+  <div class="hr"><!-- i --></div>
+  
+  {% if user.is_authenticated %}
+      <div class="buttons">
+        <a href="/foros/{{ categoria.nombre_limpio }}/nuevo_topico/">Nuevo t&oacute;pico</a>
+      </div>
+  {% else %}
+    <p class="error">
+      Para crear un t&oacute;pico en el foro, tienes que <a href="/registrate/?next=/foros/{{ categoria.nombre_limpio }}/">registrarte</a> y <a href="/login/?next=/foros/{{ categoria.nombre_limpio }}/">hacer login</a>.
+    </p>
+  {% endif %}
+  
+  <div class="hr"><!-- i --></div>
+  
+  {% if topicos.object_list %}
+    {% for topico in topicos.object_list %}
+      <div class="articulo">
+        <div class="title">
+          <a href="/foros/{{ topico.categoria.nombre_limpio }}/{{ topico.id }}/">{{ topico.titulo }}</a>
+        </div>
+        <div class="metadata">
+          {{ topico.user.username }} | 
+          {{ topico.fecha }}
+          {% if user.is_staff %}
+            | <a href="/admin/foros/topico/{{ topico.id }}/">Editar</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endfor %}
+    
+    <div class="nav">
+      {% if topicos.has_previous %}
+        <a href="/foros/{{ categoria.nombre_limpio }}/?page={{ topicos.previous_page_number }}">&laquo; Anterior</a>
+      {% endif %}
+      {% if topicos.has_next %}
+        <a href="/foros/{{ categoria.nombre_limpio }}/?page={{ topicos.next_page_number }}">Siguiente &raquo;</a>
+      {% endif %}
+    </div>
+  {% else %}
+    <p class="error">
+      Esta categor&iacute;a a&uacute;n no tiene ning&uacute;n t&oacute;pico.  <a href="/foros/{{ categoria.nombre_limpio }}/nuevo_topico/">Crea un t&oacute;pico</a>.
+    </p>
+  {% endif %}
+{% endblock %}

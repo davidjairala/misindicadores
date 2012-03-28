@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+	Recuperar clave
+{% endblock %}
+
+{% block subtitle %}
+	Recuperar clave
+{% endblock %}
+
+{% block content %}
+	<p class="info">
+		Por favor introduce tu e-mail para iniciar el proceso de recuperaci&oacute;n de clave:
+	</p>
+	
+	<form method="post" action="/doRecover/">
+    {% csrf_token %}
+		<table class="grid">
+			<tr>
+				<td>
+					E-mail:
+				</td>
+				<td>
+					<input type="text" name="email" value="" />
+				</td>
+			</tr>
+			<tr>
+				<td>
+					&nbsp;
+				</td>
+				<td>
+					<input type="submit" value="Recuperar" />
+				</td>
+			</tr>
+		</table>
+	</form>
+{% endblock %}

@@ -1,0 +1,517 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	Tabla Comparativa de Divisas
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/divisas/">Divisas</a> - 
+    <a href="/divisas/tabla_comparativa/">Tabla Comparativa de Divisas</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/divisas/tabla_comparativa/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/divisas/tabla_comparativa/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+  
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'D&oacute;lar',
+            data: [
+              {{ chart_dolars }}
+            ]
+          },
+          {
+            name: 'Euro',
+            data: [
+              {{ chart_euros }}
+            ]
+          },
+          {
+            name: 'DEG',
+            data: [
+              {{ chart_degs }}
+            ]
+          },
+          {
+            name: 'Libra',
+            data: [
+              {{ chart_libras }}
+            ]
+          },
+          {
+            name: 'Yen',
+            data: [
+              {{ chart_yens }}
+            ],
+            visible: false
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if valores %}
+    <div class="mid_box">
+      <h3>
+        An&aacute;lisis
+      </h3>
+
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            <!-- i -->
+          </th>
+          <th class="bordered_bottom bordered_right">
+            D&oacute;lar
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Euro
+          </th>
+          <th class="bordered_bottom bordered_right">
+            DEG
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Libra
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Yen
+          </th>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Actual:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'last_value'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'last_value'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Tendencia:
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ valores_dolars|get_stat:'tendencia_color' }}">
+            {{ valores_dolars|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ valores_euros|get_stat:'tendencia_color' }}">
+            {{ valores_euros|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ valores_degs|get_stat:'tendencia_color' }}">
+            {{ valores_degs|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ valores_libras|get_stat:'tendencia_color' }}">
+            {{ valores_libras|get_stat:'tendencia' }}
+          </td>
+          <td class="bordered_right bordered_bottom numero {{ valores_yens|get_stat:'tendencia_color' }}">
+            {{ valores_yens|get_stat:'tendencia' }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Promedio:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'promedio'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'promedio'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'sem'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'sem'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            M&aacute;ximo:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'max'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'max'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            M&iacute;nimo:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'min'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'min'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Media:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'media'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'media'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Moda:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'moda'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'moda'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'desv'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'desv'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Varianza:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'varianza'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'varianza'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Inclinaci&oacute;n:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'skew'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'skew'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            Kurtosis:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'kurtosis'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'kurtosis'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Tendencia Relativa">TR</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'tendencia_relativa'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'tendencia_relativa'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'tra'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'tra'|currency }}
+          </td>
+        </tr>
+        <tr>
+          <td class="bold bordered_right bordered_bottom">
+            <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_dolars|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_euros|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_degs|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_libras|get_stat:'prediccion_lineal'|currency }}
+          </td>
+          <td class="bordered_right bordered_bottom numero">
+            {{ valores_yens|get_stat:'prediccion_lineal'|currency }}
+          </td>
+        </tr>
+      </table>
+    </div>
+    
+    <div class="mid_box">
+      <h3>
+        Valores
+      </h3>
+    
+      <table>
+        <tr>
+          <th class="bordered_bottom bordered_right">
+            <!-- i -->
+          </th>
+          <th class="bordered_bottom bordered_right">
+            D&oacute;lar
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Euro
+          </th>
+          <th class="bordered_bottom bordered_right">
+            DEG
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Libra
+          </th>
+          <th class="bordered_bottom bordered_right">
+            Yen
+          </th>
+        </tr>
+        {% for valor in valores %}
+          <tr>
+            <td class="bordered_bottom bordered_right">
+              {{ valor.fecha|sDate }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ valor.dolar|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ valor.euro|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ valor.deg|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ valor.libra|currency }}
+            </td>
+            <td class="bordered_bottom bordered_right numero">
+              {{ valor.yen|currency }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}

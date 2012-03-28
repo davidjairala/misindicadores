@@ -1,0 +1,38 @@
+{% for articulo in articulos.object_list %}
+  <div class="articulo">
+    <div class="title">
+      {{ articulo.linked_title|safe }}
+    </div>
+    <div class="metadata">
+      {{ articulo.fecha_added }} | 
+      <strong>Fuente:</strong> 
+      {{ articulo.rss.titulo }} | 
+      {{ articulo.read_more_link|safe }} | 
+      <strong>Puntos:</strong>
+      {{ articulo.puntos }}
+      {% if user.is_staff %}
+        |
+        <a href="/admin/medios/articulo/{{ articulo.id }}/">editar</a>
+      {% endif %}
+    </div>
+    {% if articulo.descripcion and articulo.descripcion != "" and articulo.descripcion != "." %}
+      <div>
+        {{ articulo.descripcion|safe }}
+      </div>
+    {% endif %}
+    {% if articulo.has_hijos %}
+      <div class="hijos">
+        {% for hijo in articulo.hijos %}
+          <div>
+            {{ hijo.linked_title|safe }}
+            <div class="metadata">
+              {{ hijo.fecha_added }} | 
+              <strong>Fuente:</strong>
+              {{ hijo.rss.titulo }}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+{% endfor %}

@@ -1,0 +1,762 @@
+{% extends "base.html" %}
+{% load tags %}
+
+{% block title %}
+	{{ chart_title|safe }}
+{% endblock %}
+
+{% block content %}
+  <h1>
+    <a href="/desempeno/">Desempe&ntilde;o</a> - 
+    <a href="/desempeno/{{ slug }}/">{{ chart_title|safe }}</a>
+  </h1>
+  
+  <h2>
+    {{ fecha|sDate }}
+  </h2>
+  
+  <div class="small right">
+    <form method="get" action="/desempeno/{{ slug }}/">
+      {{ fecha|fecha_select|safe }}
+      <input type="submit" value="Ver" />
+      <input type="button" value="Hoy" onclick="location.href = '/desempeno/{{ slug }}/';" />
+    </form>
+  </div>
+  
+  <div id="container_chart" style="height: 400px; margin: 0 auto"></div>
+
+  <script type="text/javascript"> 
+    $(document).ready(function() {
+      var chart = new Highcharts.Chart({
+        chart: {
+          renderTo: 'container_chart',
+          defaultSeriesType: 'line',
+          margin: [50, 20, 80, 70]
+        },
+        title: {
+          text: "{{ chart_title|safe }}",
+          style: {
+            margin: '10px 100px 0 0' // center it
+          }
+        },
+        subtitle: {
+          text: '{{ chart_source|safe }}',
+          style: {
+            margin: '0 100px 0 0' // center it
+          }
+        },
+        xAxis: {
+          categories: [
+            {{ chart_categories|safe }}
+          ],
+          title: {
+            text: 'Fecha'
+          },
+          labels: {
+            rotation: -90, 
+            y: 34, 
+            style: {
+              fontSize: '8pt'
+            }
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'Valor'
+          },
+          plotLines: [{
+            value: 0,
+            width: 1,
+            color: '#808080'
+          }]
+        },
+        tooltip: {
+          formatter: function() {
+            return '<b>'+ this.series.name +'</b><br/>'+
+            this.x +': '+ this.y;
+          }
+        },
+        legend: {
+          layout: 'vertical',
+          style: {
+            left: 'auto',
+            bottom: 'auto',
+            right: '10px',
+            top: '100px'
+          }
+        },
+        credits: {
+          enabled: false
+        },
+        series: [
+          {
+            name: 'Reserva Internacional USD',
+            data: [
+              {{ chart_rids }}
+            ]
+          },
+          {
+            name: 'Base Monetaria M.N.',
+            data: [
+              {{ chart_bms }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Activos Internacionales M.N.',
+            data: [
+              {{ chart_ainps }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Activos Internacionales Netos USD',
+            data: [
+              {{ chart_ainds }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Cr&eacute;dito Interno Neto M.N.',
+            data: [
+              {{ chart_cinps }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Base Monetaria M.N. - desde inicio del a&ntilde;o',
+            data: [
+              {{ chart_bmps }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Activos internacionales netos M.N. - desde inicio del a&ntilde;o',
+            data: [
+              {{ chart_ainpvs }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Activos internacionales netos USD - desde inicio del a&ntilde;o',
+            data: [
+              {{ chart_aindvs }}
+            ],
+            visible: false
+          },
+          {
+            name: 'Cr&eacute;dito interno neto M.N. - desde inicio del a&ntilde;o',
+            data: [
+              {{ chart_cinpvs }}
+            ],
+            visible: false
+          }
+        ]
+      });
+    });
+  </script>
+  
+  <div class="hr"><!-- i --></div>
+
+  {% if reservas %}
+    <h3>
+      An&aacute;lisis
+    </h3>
+
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          <!-- i -->
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Base Monetaria">BM</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos M.N.">AIN M.N.</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos USD">AIN USD</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Cr&eacute;dito Interno Neto M.N.">CIN M.N.</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Reservas Internacionales USD">RI USD</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Base Monetaria M.N. - desde inicio del a&ntilde;o">BM M.N. - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos M.N. - desde inicio del a&ntilde;o">AIN M.N. - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos USD - desde inicio del a&ntilde;o">AIN USD - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Cr&eacute;dito Interno Neto M.N. - desde inicio del a&ntilde;o">CIN M.N. - IA</abbr>
+        </th>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Actual:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'last_value'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'last_value'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Tendencia:
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ bms|get_stat:'tendencia_color' }}">
+          {{ bms|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ ainps|get_stat:'tendencia_color' }}">
+          {{ ainps|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ ainds|get_stat:'tendencia_color' }}">
+          {{ ainds|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ cinps|get_stat:'tendencia_color' }}">
+          {{ cinps|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ rids|get_stat:'tendencia_color' }}">
+          {{ rids|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ bmps|get_stat:'tendencia_color' }}">
+          {{ bmps|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ ainpvs|get_stat:'tendencia_color' }}">
+          {{ ainpvs|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ aindvs|get_stat:'tendencia_color' }}">
+          {{ aindvs|get_stat:'tendencia' }}
+        </td>
+        <td class="bordered_right bordered_bottom numero {{ cinpvs|get_stat:'tendencia_color' }}">
+          {{ cinpvs|get_stat:'tendencia' }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Promedio:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'promedio'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'promedio'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Error est&aacute;ndar del promedio">ESP</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'sem'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'sem'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&aacute;ximo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'max'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'max'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          M&iacute;nimo:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'min'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'min'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Media:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'media'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'media'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Moda:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'moda'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'moda'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Desviaci&oacute;n est&aacute;ndar">Desv. est.</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'desv'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'desv'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Varianza:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'varianza'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'varianza'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Inclinaci&oacute;n:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'skew'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'skew'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          Kurtosis:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'kurtosis'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'kurtosis'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa">TR</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'tendencia_relativa'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'tendencia_relativa'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Tendencia Relativa Acumulada">TRA</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'tra'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'tra'|currency }}
+        </td>
+      </tr>
+      <tr>
+        <td class="bold bordered_right bordered_bottom">
+          <abbr title="Predicci&oacute;n Lineal">PL</abbr>:
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bms|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainps|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainds|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinps|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ rids|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ bmps|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ ainpvs|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ aindvs|get_stat:'prediccion_lineal'|currency }}
+        </td>
+        <td class="bordered_right bordered_bottom numero">
+          {{ cinpvs|get_stat:'prediccion_lineal'|currency }}
+        </td>
+      </tr>
+    </table>
+    
+    <div class="hr"><!-- i --></div>
+    
+    <h3>
+      Valores
+    </h3>
+  
+    <table>
+      <tr>
+        <th class="bordered_bottom bordered_right">
+          Fecha
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Base Monetaria">BM</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos M.N.">AIN M.N.</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos USD">AIN USD</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Cr&eacute;dito Interno Neto M.N.">CIN M.N.</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Reservas Internacionales USD">RI USD</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Base Monetaria M.N. - desde inicio del a&ntilde;o">BM M.N. - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos M.N. - desde inicio del a&ntilde;o">AIN M.N. - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Activos Internacionales Netos USD - desde inicio del a&ntilde;o">AIN USD - IA</abbr>
+        </th>
+        <th class="bordered_bottom bordered_right">
+          <abbr title="Cr&eacute;dito Interno Neto M.N. - desde inicio del a&ntilde;o">CIN M.N. - IA</abbr>
+        </th>
+      </tr>
+      {% for reserva in reservas %}
+        <tr>
+          <td class="bordered_bottom bordered_right">
+            {{ reserva.fecha|sDate }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.base_monetaria|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.activos_internacionales_netos_pesos|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.activos_internacionales_netos_dolares|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.credito_interno_neto_pesos|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.reserva_internacional_dolares|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.base_monetaria_pesos|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.activos_internacionales_netos_pesos_var|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.activos_internacionales_netos_dolares_var|currency }}
+          </td>
+          <td class="bordered_bottom bordered_right numero">
+            {{ reserva.credito_interno_neto_pesos_var|currency }}
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+    
+    <div class="break"><!-- i --></div>
+  {% else %}
+    <div class="error">
+      No encontramos valores para esta fecha, por favor intenta nuevamente.
+    </div>
+  {% endif %}
+{% endblock %}
